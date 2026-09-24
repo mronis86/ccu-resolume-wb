@@ -3,45 +3,52 @@
 CCU is built on other people's work. This file lists what that work is, who did
 it, and what it is doing here.
 
-This is a PROVISIONAL hand copy (2026-09-24). The real file is generated — the
-master lists live in the `stoatworks-backend` repo and are pushed out by
-`scripts/sync-attributions.py` once the project is registered. Edit it there, not here.
+It is generated — the master lists live in the `stoatworks-backend` repo and are
+pushed out by `scripts/sync-attributions.py`. Edit it there, not here.
 
 ## Code we derived from other people's work
 
 Someone else solved this first, and this project would not exist in its current form without their work.
 
-### Harness shape, --pipe contract and verify — Stoatworks toner, slope and clamp
+### Harness, verify script, --pipe contract and the negative-control pattern — Stoatworks toner, slope and clamp
+
+<https://github.com/stoatworks-labs/toner>  
+Licence: MIT  
+Copyright: Stoatworks Labs
+
+tools/cctest's CGL plumbing, PNG writer, --list/--names/--out/--pipe with the cue-sheet parser, --offline and the GL-less CI, tools/verify.sh's two-raster shape and tools/sweep.py, adapted from toner's, which came by way of slope from clamp. Nothing of the copier, coder or clamp models is here.
+
+### Host clock — Stoatworks clamp
 
 <https://github.com/stoatworks-labs/clamp>  
 Licence: MIT  
 Copyright: Stoatworks Labs
 
-The harness shape, the --pipe contract (SIGPIPE ignored, a closed stdout is exit 1), the negative-control pattern, --offline, check-shaders.sh, the verify script, the sweep and the CI workflows are clamp's, by way of slope and toner.
+source/Clock.{h,cpp}: unit voting on the host's SetTime and an origin plus offset kept in double, unchanged, so the drift only ever sees a dt.
 
-### The clock — Stoatworks clamp
-
-<https://github.com/stoatworks-labs/clamp>  
-Licence: MIT  
-Copyright: Stoatworks Labs
-
-`Clock.{h,cpp}` unchanged: the host's clock unit voted on, an origin and an offset in double, so a Resolume clock that overflows a float never reaches the drift as anything but a dt.
-
-### PassBuffer and the trap list — Stoatworks tinsel
-
-<https://github.com/stoatworks-labs/tinsel>  
-Licence: MIT  
-Copyright: Stoatworks Labs
-
-The off-screen buffer wrapper over the SDK's FFGLFBO (reallocating only when the size changes, freeing the colour texture the SDK's Release() leaks) and the FFGL trap list that came with it, by way of toner.
-
-### The camera model's partner — Stoatworks plumbicon
+### Plugin shape, Diag logger and the About block — Stoatworks plumbicon
 
 <https://github.com/stoatworks-labs/plumbicon>  
 Licence: MIT  
 Copyright: Stoatworks Labs
 
-The plugin shape, the Diag logger and the About block are plumbicon's; plumbicon is the tube in front of this chain and this is the processing behind it.
+The two-pass effect's shape (source/Ccu.{h,cpp}, PluginEntry.cpp), source/Diag.{h,cpp} (the log-file writer, from orrery by way of plumbicon) and the About parameter headers. Plumbicon is the tube in front of this chain; none of its tube model is here.
+
+### PassBuffer and the fleet's trap list — Stoatworks tinsel
+
+<https://github.com/stoatworks-labs/tinsel>  
+Licence: MIT  
+Copyright: Stoatworks Labs
+
+source/PassBuffer.* (tinsel's FFGLFBO with the colour-texture leak fixed) and the inherited GL traps applied throughout.
+
+### Release notes shape and the provisional About — Stoatworks graticule
+
+<https://github.com/stoatworks-labs/graticule>  
+Licence: MIT  
+Copyright: Stoatworks Labs
+
+The shape of the release notes and the provisional hand copy of StoatworksAbout.h used before registration.
 
 ## Third-party code this project uses
 
@@ -53,7 +60,7 @@ Libraries, SDKs and frameworks the project is built on or bundles.
 Licence: BSD-3-Clause  
 Copyright: FreeFrame
 
-Vendored as a git submodule at external/ffgl.
+Vendored as a git submodule at external/ffgl (third_party/ffgl in oxbow).
 
 The plugin ABI itself. An FFGL effect or source is defined by this SDK's headers — there is no other way to be loadable by Resolume Arena and Avenue.
 
@@ -67,29 +74,23 @@ Arrives inside the FFGL submodule at external/ffgl/deps/glew-2.1.0. Not fetched 
 
 Resolves OpenGL entry points on Windows, where the system headers stop at OpenGL 1.1.
 
-### zlib
+### libpng
 
-<https://zlib.net>  
-Licence: zlib  
-Copyright: Jean-loup Gailly and Mark Adler
+<http://www.libpng.org/pub/png/libpng.html>  
+Licence: PNG Reference Library License (libpng)  
+Copyright: the PNG Reference Library authors
 
-The system's copy, linked by the offline harness only, for its PNG writer. Not shipped in the bundle.
+Arrives inside the FFGL submodule, under the SDK's CustomThumbnail sample.
 
-## Standards and published specifications
+Part of the upstream SDK tree rather than something these plugins call directly — listed because it is present in the checkout.
 
-What the implementation is measured against.
+## Inspirations
 
-- **ITU-R BT.709** — The OETF (the 0.45 exponent, the 0.018 break, and the 1.099 / 4.5 constants the harness checks the family reproduces), the luma weights, and the primaries the Standard matrix maps to.
-- **SMPTE 170M / SMPTE RP 145 ("SMPTE-C")** — The standard-definition primaries the Standard matrix maps from; the resulting matrix is checked against the published one in Poynton, *Digital Video and HD*.
-- **Melissa E. O'Neill, "PCG: A Family of Simple Fast Space-Efficient Statistically Good Algorithms for Random Number Generation" (Harvey Mudd College, 2014)** — The integer output permutation used for the drift's noise, implemented from the paper.
+What this set out to be. No code, assets or binaries from any of these were used or examined — the debt is to the idea.
 
-## Reference
+### Broadcast camera processing chains, as a genre
 
-Nothing was copied from these; they are what the model was built from.
-
-### Broadcast camera processing
-
-The order of a camera's processing chain and the names of its controls — master gain and black, white balance, the linear matrix, detail (aperture correction) with its crispening, coring, level dependence and skin detail, the knee, gamma and black gamma, white clip — are the standard account in broadcast engineering texts and in any CCU's operating manual. Implemented from that description; no manufacturer's table, curve or code was used, and the matrix presets carry generic names for that reason.
+The stages and their order (linear light, white balance, matrix, aperture correction with coring and skin detail, knee, gamma and black gamma, pedestal, white clip) and the names a camera control unit gives its knobs are the trade's public convention, and that is all that was taken. The matrix presets are derivations with generic names: the Standard matrix is SMPTE 170M primaries to BT.709 primaries from the chromaticities, checked against the matrix Charles Poynton publishes; High Saturation and Film-like are a saturation and a hue rotation about the grey axis with judged constants. The OETF is BT.709's, as a family in its exponent. No manufacturer's circuit, firmware, curve, preset, menu or documentation was copied or consulted, and no manufacturer is named.
 
 ## Getting this wrong
 

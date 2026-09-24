@@ -75,6 +75,10 @@ enum Perturb : int
 // BT.709 luma, used for the detail signal, the saturation matrix and the
 // level dependence.
 //---------------------------------------------------------------------------
+/// pi, spelt out: MSVC has no M_PI without _USE_MATH_DEFINES, and the first
+/// Windows CI runs of two siblings failed on exactly that.
+inline constexpr double kPi = 3.14159265358979323846;
+
 inline constexpr double kLumaR = 0.2126;
 inline constexpr double kLumaG = 0.7152;
 inline constexpr double kLumaB = 0.0722;
@@ -197,7 +201,7 @@ inline constexpr double kSkinChromaHigh     = 0.15;
 /// angle of the chroma vector in the plane normal to grey.
 inline double HueDegrees( double r, double g, double b )
 {
-	const double h = std::atan2( std::sqrt( 3.0 ) * ( g - b ), 2.0 * r - g - b ) * 180.0 / M_PI;
+	const double h = std::atan2( std::sqrt( 3.0 ) * ( g - b ), 2.0 * r - g - b ) * 180.0 / kPi;
 	return h < 0.0 ? h + 360.0 : h;
 }
 
@@ -285,7 +289,7 @@ inline Mat3 Saturation( double s )
 
 inline Mat3 HueRotate( double degrees )
 {
-	const double t = degrees * M_PI / 180.0;
+	const double t = degrees * kPi / 180.0;
 	const double c = std::cos( t ), s = std::sin( t );
 	const double k = 1.0 / std::sqrt( 3.0 );
 	//R = c I + s [k]x + ( 1 - c ) k k^T, k = ( 1, 1, 1 ) / sqrt 3.
@@ -393,7 +397,7 @@ inline double DriftGaussian( uint32_t frame )
 {
 	const double u1 = ( ( HashInt( kDriftSeed + 2u * frame ) >> 8 ) + 1.0 ) / 16777216.0;
 	const double u2 = ( HashInt( kDriftSeed + 2u * frame + 1u ) >> 8 ) / 16777216.0;
-	return std::sqrt( -2.0 * std::log( u1 ) ) * std::cos( 2.0 * M_PI * u2 );
+	return std::sqrt( -2.0 * std::log( u1 ) ) * std::cos( 2.0 * kPi * u2 );
 }
 
 inline double DriftStep( double u, double dtSeconds, uint32_t frame )
