@@ -43,6 +43,38 @@ is the real plugin's output: an FFGL plugin has no window, so the footage is
 rendered by this repository's own offline harness (`cctest --pipe`, driven by
 a cue sheet) over Resolume's bundled demo clips, not captured from Resolume.*
 
+<!-- downloads:start -->
+
+## Download
+
+**[v0.1.0](https://github.com/stoatworks-labs/ccu/releases/tag/v0.1.0)** — prebuilt for macOS and Windows. Pick your platform:
+
+<details>
+<summary><b>macOS</b> — Universal (Apple Silicon + Intel)</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| Universal (Apple Silicon + Intel) · .dmg disk image | [`ccu-0.1.0-macos-universal.dmg`](https://github.com/stoatworks-labs/ccu/releases/download/v0.1.0/ccu-0.1.0-macos-universal.dmg) | 204 KB |
+| Universal (Apple Silicon + Intel) · .zip archive | [`ccu-macos-universal.zip`](https://github.com/stoatworks-labs/ccu/releases/latest/download/ccu-macos-universal.zip) | 167 KB |
+
+</details>
+
+<details>
+<summary><b>Windows</b> — x64</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| x64 · .exe installer | [`ccu-0.1.0-windows-x86_64-setup.exe`](https://github.com/stoatworks-labs/ccu/releases/download/v0.1.0/ccu-0.1.0-windows-x86_64-setup.exe) | 218 KB |
+| x64 · .zip archive | [`ccu-windows-x86_64.zip`](https://github.com/stoatworks-labs/ccu/releases/latest/download/ccu-windows-x86_64.zip) | 111 KB |
+
+</details>
+
+All builds, checksums and release notes: [github.com/stoatworks-labs/ccu/releases](https://github.com/stoatworks-labs/ccu/releases).
+
+macOS builds are signed and notarised and open normally. The Windows builds are unsigned, so SmartScreen warns once.
+
+<!-- downloads:end -->
+
 ## The one idea
 
 The "video" look of a studio or OB camera is not a filter. It is a
