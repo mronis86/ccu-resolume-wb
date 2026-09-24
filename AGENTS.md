@@ -390,6 +390,67 @@ defaults stood. Two things the footage taught:
 
 ---
 
+## The browser demo
+
+`demo/` is the page at **ccu-demo.stoatworks-labs.com**, a static-assets Worker
+deployed from `wrangler.toml` with `cf-run npx wrangler deploy` and by
+`.github/workflows/deploy.yml` on every push to main (no build step; what is
+committed is what is served). `demo/vendor/` is the shared kit from
+`stoatworks-backend/resolume-demo/` and is not edited here. The host is a Worker
+**route** plus a proxied `AAAA 100::` DNS record, not a custom domain: the zone
+hit Cloudflare's 100-custom-domain limit on 2026-09-24. Delete that record and
+the page goes dark while deploys stay green.
+
+The page runs the plugin's three shaders (`kVertex`, `kLinear`, `kProcess`),
+copied across unedited: `demo/tools/check_shaders.py` compares them with
+`source/Shaders.cpp` character for character and `tools/verify.sh` fails if one
+drifts. **What is a port** is everything the C++ computes on the way to a
+uniform, written out again in JavaScript doubles in `demo/plugin.js`:
+`Controls.cpp` function for function; `Model.h`'s closed forms — the OETF's a
+and k from the exponent by continuity at 0.018 (and the inverse at exactly
+0.45), the 3×3 per preset as a derivation (Saturation, Rodrigues' hue rotation
+about grey, SMPTE 170M to BT.709 primaries through `PrimariesToXYZ` and the
+inverse) times the Saturation control, and the drift's PCG hash, Box–Muller
+normal and Ornstein–Uhlenbeck step; and `Ccu::ProcessOpenGL`'s two draws with
+their uniforms. **Nothing checks that port but a reader**: `cctest` proves the
+C++ and the GLSL and has never heard of the page. Change any of those and change
+`demo/plugin.js` by hand to match. `pow`, `exp`, `log`, `cos` and `sqrt` are the
+JavaScript engine's rather than libm's and may differ in the last bit.
+
+What the page does differently, all of it said on the page:
+
+- **The clock is the kit's**, not `Clock.cpp`'s: seconds accumulated from the
+  page's frame deltas (clamped to 0.1 s), paused and stepped by the transport.
+  The drift's dt is the difference of two readings; a backwards reading (Restart)
+  is treated as the plugin's jump, one nominal frame of 1/60 s. The walk starts
+  at zero with the plugin's own seed, so a reload replays the same walk.
+- **The linear buffer is RGBA32F**, as in the plugin, through
+  `EXT_color_buffer_float`; the kit refuses to start without it rather than
+  running the chain on 8-bit linear light. Sampled NEAREST with `texelFetch`.
+- `MaxUV` is `( 1, 1 )` (the kit's clips are never padded) and the host's
+  viewport is the whole canvas at the clip's size, which the process pass's
+  `texelFetch` at `gl_FragCoord` assumes.
+- The 3×3 goes to the GPU column-major with transpose false, where the C++ hands
+  `glUniformMatrix3fv` a row-major array with `GL_TRUE`. Same nine slots.
+- `Perturb` is held at 0, what the shipped plugin carries: the seven negative
+  controls are not on the page. The About block is absent, as on every page in
+  the suite. No audio caveat: CCU has no audio path. The clips carry no face, so
+  the skin window acts on whatever hue falls inside it.
+
+Decided without asking, for the page: the synthetic scene leads the clip list
+(a hot sun for the knee, hard edges for the detail, warm colours for the skin
+window), bars and the ramps read the knee and the OETF as numbers; the presets
+are the page's own (the plugin ships none), expressed entirely in its parameters;
+a line under the canvas reports the drift as the port is stepping it; and the
+docs sections landed after v0.1.0 was tagged, because the demo is not in the
+binary and needs no tag. Verified 2026-09-24 headlessly (SwiftShader): the page
+loads with no console errors, all 23 controls in seven groups, and the picture
+changes with Show Detail and with Detail Level. The only console error on the
+live page is Cloudflare's injected `/cdn-cgi/challenge-platform` script refused
+by the page's `script-src 'self'`, known fleet-wide and not the page's.
+
+---
+
 ## Siblings
 
 - **toner**, by way of **slope** and **clamp** — the harness, verify, CI and `--pipe`

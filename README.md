@@ -201,6 +201,20 @@ See [`CLAUDE.md`](CLAUDE.md) for the full command reference and
 [`AGENTS.md`](AGENTS.md) for the model, the traps, and where every tolerance
 comes from.
 
+## Browser demo
+
+[ccu-demo.stoatworks-labs.com](https://ccu-demo.stoatworks-labs.com/) runs
+the plugin's own linear and process shaders in WebGL2, on generated clips, with
+every control the plugin declares in its own order, groups and defaults.
+`demo/tools/check_shaders.py` fails `tools/verify.sh` if the page's copy of any
+shader drifts from `source/Shaders.cpp`. Everything the C++ computes on the way
+to a uniform — the control laws in `Controls.cpp`, the OETF's constants from the
+exponent, the matrices and the white-balance drift in `Model.h` — is a hand port
+to JavaScript in `demo/plugin.js`, and nothing checks that but a reader. It is
+not the plugin: no Resolume, no FFGL, GLSL ES 3.00 rather than GL 4.1, the
+kit's clock rather than the plugin's, and a float render target is required.
+The page says all of this itself. Source in [`demo/`](demo/).
+
 <!-- attributions:start -->
 This project is built on other people's work — see [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
 <!-- attributions:end -->
