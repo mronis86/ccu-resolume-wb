@@ -31,6 +31,18 @@ the knee; the hair on the skin disc is softer than the weave on the jacket
 because of the skin window; the floor's fine texture is left alone by the
 coring.</sub>
 
+[![CCU — a broadcast camera's processing chain with every knob out, for Resolume](docs/video-thumb.png)](https://www.youtube.com/watch?v=w5i91PWg-c4)
+
+*[Watch it](https://www.youtube.com/watch?v=w5i91PWg-c4) — 62 seconds:
+Detail Level from 0 to 3 and the delay from 2 to 9 pixels, the Show Detail
+view with Coring eating the texture, Skin Detail dropping bone and orange out
+of the view and the window moved to cyan, the knee on, off, gained into a hard
+clip and back on, a warm white compressed and then clipped in red first, Gamma
+and Black Gamma, the four matrix presets, pedestal and white clip. Every frame
+is the real plugin's output: an FFGL plugin has no window, so the footage is
+rendered by this repository's own offline harness (`cctest --pipe`, driven by
+a cue sheet) over Resolume's bundled demo clips, not captured from Resolume.*
+
 ## The one idea
 
 The "video" look of a studio or OB camera is not a filter. It is a
