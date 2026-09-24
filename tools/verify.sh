@@ -160,17 +160,17 @@ else
 	fail "a closed stdout gave exit $status, not 1"
 fi
 
-# An option or a boolean STEPS between cues, a slider ramps. Twelve identical
-# grey frames with Drift off; Show Detail cued 0 at frame 0 and 1 at frame 8,
-# Detail Level cued 0 at 0 and 1 at 8. Frames 0 and 4 must be byte-identical
-# (the boolean held at 0, and with Show Detail off a ramping Detail Level
-# on a flat grey changes nothing); frame 8 must differ from frame 0 (the
-# boolean has stepped). A ramped boolean would read 0.5 at frame 4, cross
-# the 0.5 threshold and switch the view early.
-grey=$( mktemp ); stepped=$( mktemp )
-python3 -c "import sys; sys.stdout.buffer.write(bytes([128,128,128,255]) * (64*36*12))" > "$grey"
-printf '0 Show Detail 0\n8 Show Detail 1\n0 Detail Level 0\n8 Detail Level 1\n' > "$cues"
-"$CCTEST" --pipe --size 64x36 --set "Drift=0" --script "$cues" < "$grey" > "$stepped" 2>/dev/null
+# An option or a boolean STEPS between cues; a slider ramps. Twelve identical
+# frames with an edge down the middle and Drift off. Script 1 cues Show
+# Detail 0 at frame 0 and 1 at frame 8: frames 0 and 4 must be byte-identical
+# (the boolean held at 0) and frame 8 must differ (it has stepped). A ramped
+# boolean would read 0.5 at frame 4 and switch the view early. Script 2 cues
+# Master Black 0.25 at 0 and 1 at 8: frames 0, 4 and 8 must all differ (the
+# slider ramps through 0.625 at frame 4).
+edge=$( mktemp ); stepped=$( mktemp ); ramped=$( mktemp )
+python3 -c "import sys; row = bytes([40,40,40,255]) * 32 + bytes([200,200,200,255]) * 32; sys.stdout.buffer.write(row * 36 * 12)" > "$edge"
+printf '0 Show Detail 0\n8 Show Detail 1\n' > "$cues"
+"$CCTEST" --pipe --size 64x36 --set "Drift=0" --script "$cues" < "$edge" > "$stepped" 2>/dev/null
 status=$?
 f0=$( dd if="$stepped" bs=$frame skip=0 count=1 2>/dev/null | shasum | cut -c1-16 )
 f4=$( dd if="$stepped" bs=$frame skip=4 count=1 2>/dev/null | shasum | cut -c1-16 )
@@ -180,7 +180,18 @@ if [ "$status" -eq 0 ] && [ "$f0" = "$f4" ] && [ "$f0" != "$f8" ]; then
 else
 	fail "a boolean cue did not step (exit $status; frames 0/4/8: $f0 $f4 $f8)"
 fi
-rm -f "$raw" "$many" "$cues" "$grey" "$stepped"
+printf '0 Master Black 0.25\n8 Master Black 1\n' > "$cues"
+"$CCTEST" --pipe --size 64x36 --set "Drift=0" --script "$cues" < "$edge" > "$ramped" 2>/dev/null
+status=$?
+r0=$( dd if="$ramped" bs=$frame skip=0 count=1 2>/dev/null | shasum | cut -c1-16 )
+r4=$( dd if="$ramped" bs=$frame skip=4 count=1 2>/dev/null | shasum | cut -c1-16 )
+r8=$( dd if="$ramped" bs=$frame skip=8 count=1 2>/dev/null | shasum | cut -c1-16 )
+if [ "$status" -eq 0 ] && [ "$r0" != "$r4" ] && [ "$r4" != "$r8" ] && [ "$r0" != "$r8" ]; then
+	pass "a slider cue ramps: frames 0, 4 and 8 all differ"
+else
+	fail "a slider cue did not ramp (exit $status; frames 0/4/8: $r0 $r4 $r8)"
+fi
+rm -f "$raw" "$many" "$cues" "$edge" "$stepped" "$ramped"
 
 step "sweep"
 if out=$(python3 tools/sweep.py --binary "$CCTEST" 2>/dev/null); then
