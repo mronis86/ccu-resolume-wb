@@ -267,9 +267,12 @@ before and after; `--identity --gamma` passed again on the rebuilt binary (14 ch
   exits 1 on a failed render.
 - **The hero is the test card at the defaults**, rendered by the harness, not a demo
   clip: Resolume's media is theirs.
-- **Provisional About and attributions** (`StoatworksAbout.h`, `ATTRIBUTIONS.md`) are
-  hand copies adapted from toner's with `guide=""`, so three About buttons; the release
-  step registers the project and re-runs the syncs.
+- **About and attributions are generated** (`StoatworksAbout.h`, `ATTRIBUTIONS.md`):
+  hand copies adapted from toner's until the release registered the project, then the
+  backend's `sync-about.py` and `sync-attributions.py` wrote them, adding the User guide
+  button (28 parameters, four of them About). Never edit them by hand.
+- **pi is `kPi` in `Model.h`**, spelt out: MSVC has no `M_PI` without
+  `_USE_MATH_DEFINES`, and two siblings' first Windows CI runs failed on it.
 - **The FFGL submodule was dissociated from the reference clone** (`repack -a -d`, the
   alternates file removed) so this repo does not depend on a path in `~/Projects`.
 
@@ -335,19 +338,36 @@ build, at 320×180 and 1280×720 (identical at both unless said).
 
 ### Assumed, or not done
 
-- ☠️ **Never loaded into Resolume**, on either platform. Everything was compiled,
-  rendered and measured offline against the real plugin class in a headless CGL
-  context, plus an `oxbow` load.
-- **Footage judged by eye**, not measured; nine clips, one frame each.
+- ☠️ **Never loaded into Resolume on macOS.** Everything was compiled, rendered and
+  measured offline against the real plugin class in a headless CGL context, plus an
+  `oxbow` load.
+- **Windows: run once, in Resolume Arena 7.27.1 on win-lab** (Mesa llvmpipe, no GPU, 2026-09-24): the CI DLL loads, registers as `SW CCU` / `CC01` / effect, all 29 host controls match the declaration, it renders, all 24 valued controls move the picture, Arena's log is clean, 9/9 (`plugin-bench/arena/expect/ccu.json`). Never on a Windows GPU, and nothing timed there.
+- **Footage judged by eye**, not measured: all 33 demo clips at the defaults, and the
+  release video.
 - **Not verified at 4K**, only benchmarked there.
-- **Windows** has not been built; the CI workflow is adapted from toner's and has not
-  run.
 - **The drift has never been watched over a minute** in a host; its statistics are
   checked (`--laws`) and its effect at 60 frames is swept, and that is all.
-- **No OpenFX port, no browser demo**, neither required for 0.1.0.
-- **`StoatworksAbout.h` and `ATTRIBUTIONS.md` are provisional hand copies** with
-  `guide=""`; register the project and re-run the syncs before the first release.
+- **No OpenFX port.** The browser demo is a port of the shaders with the CPU half
+  re-implemented in JavaScript; nothing checks that port but a reader.
 - **Nothing has been through a show.**
+
+### Found filming the release video (2026-09-24)
+
+The video is `cctest --pipe` over Resolume's bundled demo clips
+(`stoatworks-backend/video/projects/ccu/render.py`). Every one of the 33 clips was put
+through the defaults first: nothing floods or blanks, the dark clips (Bass, Synth,
+Ethnik2, SpaceUniverse) stay dark because the chain is the identity at black, and the
+defaults stood. Two things the footage taught:
+
+- **A warm white with the knee off does not give cyan edges.** The first draft of the
+  guide said so, from reasoning about "red clips first". What the picture does: red
+  reaches the ceiling first, so the *core* of each highlight loses its warmth and goes
+  white inside a warm surround. With the knee on, red is compressed instead and the
+  highlight stays warm all the way up. The guide, README and the video's caption say
+  the second thing now.
+- **A clip whose own colour moves confounds a matrix step.** Metalive's gold ball goes
+  white and back through its loop, so the presets read as the clip changing. The matrix
+  beat uses Galactucity's dancers, whose orange and blue hold still.
 
 ---
 

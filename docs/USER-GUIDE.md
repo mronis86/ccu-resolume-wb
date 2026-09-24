@@ -31,7 +31,11 @@ coring.*
 > Eight deliberately broken chains each fail their check, and one character changed in the shipped
 > shader is caught. All 23 controls are shown to change the picture. It has **never been loaded into
 > Resolume on macOS** — the one host it has run in there is the fleet's own test host, `oxbow`, for
-> 120 frames. Try it on a spare layer before you put it in a show.
+> 120 frames. On Windows, a build of this source loads, registers and renders in Resolume Arena
+> 7.27.1 on software rendering (win-lab, Mesa llvmpipe, no GPU): all 29 host controls match the
+> declaration and all 24 that take a value move the picture, 9 of the fleet gate's 9 checks.
+> Software rendering says nothing about a GPU or about speed.
+> Try it on a spare layer before you put it in a show.
 >
 > This codebase was created with AI assistance, directed and reviewed by a human author.
 
@@ -108,8 +112,10 @@ Then:
    and the picture is plastic: only the biggest edges still have detail.
 4. **Knee On off.** The milky highlights turn to clipped white. **Master Gain up** with the knee off
    and the highlights clip hard; knee back on and they compress instead.
-5. **R Gain up, knee off.** The whites go warm and the highlights clip in red first: cyan-edged
-   highlights. Knee on and the red is compressed rather than clipped.
+5. **R Gain up, knee off.** The whites go warm and the highlights clip in red first: each
+   highlight's core goes white inside a warm surround, because red reaches the ceiling before
+   green and blue do. Knee on and the red is compressed rather than clipped, so the highlight
+   stays warm all the way up.
 6. **Gamma** to the bottom for a flat, crushed-highlight picture; to the top for a bright,
    contrasty one. **Black Gamma** up to lift the shadows without touching anything above a quarter
    level.
@@ -332,8 +338,8 @@ whole picture's hue. Lower Coring; check Skin Hue and Skin Width.
 Turn Show Detail on and move Skin Hue until the face's texture drops out and the object's comes
 back.
 
-**Cyan edges on the highlights.** A warm white balance (R Gain up) with the knee off: red clips
-first. Turn the knee on.
+**Warm highlights with white cores.** A warm white balance (R Gain up) with the knee off: red
+reaches the ceiling first and the core of every highlight loses its warmth. Turn the knee on.
 
 **The colour slowly wanders.** Drift is above 0. That is the point; set it to 0 for a warmed-up
 camera.
@@ -372,7 +378,11 @@ failed to compile if one did, and a buffer that could not be allocated.
 - **The drift's mired-to-gain law is a judged constant** (0.4% per mired), not a Planckian locus,
   and the drift has never been watched over a minute in a host.
 - **No audio input, no presets** and no OpenFX version.
-- **Only ever run on an Apple M4 Max**, although the macOS build contains an Intel slice.
+- **Only ever run on an Apple M4 Max and on win-lab's software renderer**, although the macOS
+  build contains an Intel slice. On Windows, see the note at the top of this guide.
+- **There is a browser demo** at [ccu-demo.stoatworks-labs.com](https://ccu-demo.stoatworks-labs.com).
+  It runs the plugin's own shaders in WebGL2 with the CPU half ported to JavaScript; the page
+  lists what it does not reproduce.
 - **Checked at up to 1280×720**, and only timed at 4K.
 
 ---

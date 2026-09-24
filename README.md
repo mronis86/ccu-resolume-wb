@@ -94,9 +94,9 @@ are at most 16 characters, which is why it is `Crispening Freq`.
 
 ## Status
 
-**v0.1.0, built 2026-09-24, local and honestly early.** Verified by
+**v0.1.0, released 2026-09-24, and honestly early.** Verified by
 measurement on an M4 Max, macOS 26.4, at 320×180 and 1280×720, on a fresh
-universal build. Never loaded into Resolume.
+universal build. Never loaded into Resolume on macOS.
 
 | Check | Result |
 | --- | --- |
@@ -127,13 +127,24 @@ broken one. Not measured.
 
 ### Not established
 
-It has **never been loaded into Resolume**, on either platform. Everything
-above was compiled, rendered and measured offline against the real plugin
-class in a headless CGL context, plus an `oxbow` load. How twenty-three
-controls in eight groups read in Arena's inspector is untested. The drift has
-not been watched over a minute in a host. Windows compiles in CI's design and
-has not been built here. No OpenFX port and no browser demo, neither in scope
-for 0.1.0. No user guide yet.
+It has **never been loaded into Resolume on macOS**. Everything above was
+compiled, rendered and measured offline against the real plugin class in a
+headless CGL context, plus an `oxbow` load. How twenty-three controls in eight
+groups read in Arena's inspector on macOS is untested. The drift has not been
+watched over a minute in a host. On Windows, a CI build of this source loads, registers and renders in Resolume Arena 7.27.1 on software rendering (win-lab, Mesa llvmpipe, no GPU): all 29 host controls match the declaration and all 24 that take a value move the picture, 9 of the fleet gate's 9 checks (`plugin-bench/arena/expect/ccu.json`). Software rendering says nothing about a GPU or about speed. No OpenFX port. There is a
+[user guide](https://stoatworks-labs.com/software/ccu/guide/) and a browser
+demo at [ccu-demo.stoatworks-labs.com](https://ccu-demo.stoatworks-labs.com/),
+which is a port of the shaders rather than the plugin.
+
+### Found filming the release video
+
+The video was rendered by `cctest --pipe` over Resolume's bundled demo clips,
+after every one of the 33 was put through the defaults: nothing floods or
+blanks, the dark clips stay dark, and the defaults stood. One claim was
+corrected by the footage: a warm white with the knee off does not give
+cyan-edged highlights. Red reaches the ceiling first, so each highlight's core
+goes white inside a warm surround; with the knee on it stays warm all the way
+up.
 
 ## Build
 
