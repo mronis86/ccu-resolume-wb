@@ -1,0 +1,11 @@
+{
+  "name": "ccu",
+  "version-string": "0.1.0",
+  "description": "Dependencies for building the CCU FFGL plugin. GLEW is only needed on Windows; macOS uses the system OpenGL framework.",
+  "dependencies": [
+    {
+      "name": "glew",
+      "platform": "!osx"
+    }
+  ]
+}
