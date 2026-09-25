@@ -19,10 +19,11 @@ jobs:
 
       - uses: ilammy/msvc-dev-cmd@v1
 
-      - uses: lukka/get-cmake@latest
+      - name: Install GLEW via vcpkg
+        run: vcpkg install glew:x64-windows
 
       - name: Configure CMake
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build -DCMAKE_TOOLCHAIN_FILE="C:/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         run: cmake --build build --config Release
