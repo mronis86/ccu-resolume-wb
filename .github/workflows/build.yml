@@ -19,8 +19,8 @@ jobs:
 
       - uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install GLEW via vcpkg
-        run: vcpkg install glew:x64-windows
+      - name: Install dependencies via vcpkg
+        run: C:\vcpkg\vcpkg.exe install --triplet x64-windows --vcpkg-root C:\vcpkg
 
       - name: Configure CMake
         run: cmake -B build -DCMAKE_TOOLCHAIN_FILE="C:/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_BUILD_TYPE=Release
