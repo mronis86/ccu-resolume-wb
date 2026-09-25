@@ -75,6 +75,7 @@ add_library(ccu_core OBJECT
     source/Model.h
     source/Controls.h
     source/Controls.cpp
+    source/Controls_WB.cpp
     source/PassBuffer.h
     source/PassBuffer.cpp
     source/Shaders.h
