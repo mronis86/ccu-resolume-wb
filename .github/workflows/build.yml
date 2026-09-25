@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: pwsh
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -13,11 +17,9 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Configure
-        uses: ilammy/msvc-dev-cmd@v1
+      - uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install CMake
-        uses: lukka/get-cmake@latest
+      - uses: lukka/get-cmake@latest
 
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
