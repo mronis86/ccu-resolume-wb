@@ -99,3 +99,13 @@ double BlackGamma( float p );
 double Mix( float p );
 
 } // namespace ccu::controls
+
+namespace ccu::controls
+{
+/// Color Temperature in Kelvin: maps 0..1 to 2000K..10000K, null at 0.5 = 5600K.
+double ColorTempKelvin( float p );
+/// R and B gains from a color temperature in Kelvin, relative to 5600K.
+void ColorTempGains( double kelvin, double& gainR, double& gainB );
+/// Tint trim: magenta-green, null at 0.5 = 1.0 gain on G.
+double TintGain( float p );
+}

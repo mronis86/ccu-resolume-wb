@@ -95,6 +95,10 @@ public:
 		PT_B_GAIN,
 		PT_DRIFT,
 
+            // White balance
+            PT_COLOR_TEMP,
+            PT_TINT,
+
 		//Matrix
 		PT_MATRIX,
 		PT_SATURATION,

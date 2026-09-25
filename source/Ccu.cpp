@@ -75,7 +75,9 @@ Ccu::Ccu()
 	params[ PT_WHITE_CLIP ]   = 0.5f;   //exactly 1.0
 	params[ PT_R_GAIN ]       = 0.5f;   //exactly 0 dB
 	params[ PT_B_GAIN ]       = 0.5f;
-	params[ PT_DRIFT ]        = 0.15f;  //9 mireds RMS, tau 20 s
+	params[ PT_DRIFT ]        = 0.15f;
+        params[ PT_COLOR_TEMP ]   = 0.5f;   //exactly 5600K
+        params[ PT_TINT ]         = 0.5f;   //exactly unity  //9 mireds RMS, tau 20 s
 	params[ PT_MATRIX ]       = static_cast< float >( model::kMatrixStandard );
 	params[ PT_SATURATION ]   = 0.5f;   //exactly 1
 	params[ PT_DETAIL_LEVEL ] = 0.3f;   //0.9: a step of h overshoots by 0.225 h
@@ -101,6 +103,8 @@ Ccu::Ccu()
 	SetParamInfof( PT_R_GAIN, "R Gain", FF_TYPE_STANDARD );
 	SetParamInfof( PT_B_GAIN, "B Gain", FF_TYPE_STANDARD );
 	SetParamInfof( PT_DRIFT, "Drift", FF_TYPE_STANDARD );
+        SetParamInfof( PT_COLOR_TEMP, "Color Temp", FF_TYPE_STANDARD );
+        SetParamInfof( PT_TINT, "Tint", FF_TYPE_STANDARD );
 
 	//Enum order, not alphabetical: Identity, Standard, High Saturation,
 	//Film-like reads as a progression from "off".
@@ -130,7 +134,7 @@ Ccu::Ccu()
 
 	for( FFUInt32 i = PT_MASTER_GAIN; i <= PT_WHITE_CLIP; ++i )
 		SetParamGroup( i, "Exposure" );
-	for( FFUInt32 i = PT_R_GAIN; i <= PT_DRIFT; ++i )
+	for( FFUInt32 i = PT_R_GAIN; i <= PT_TINT; ++i )
 		SetParamGroup( i, "White" );
 	for( FFUInt32 i = PT_MATRIX; i <= PT_SATURATION; ++i )
 		SetParamGroup( i, "Matrix" );
@@ -297,6 +301,13 @@ FFResult Ccu::ProcessOpenGL( ProcessOpenGLStruct* pGL )
 		linearShader.Set( "MaxUV", maxCoords.s, maxCoords.t );
 		linearShader.Set( "MasterGain", f( masterGain ) );
 		linearShader.Set( "GainR", f( gainR ) );
+                {
+                    double wbR = 1.0, wbB = 1.0;
+                    controls::ColorTempGains( controls::ColorTempKelvin( params[ PT_COLOR_TEMP ] ), wbR, wbB );
+                    linearShader.Set( "WbTempR", f( wbR ) );
+                    linearShader.Set( "WbTempB", f( wbB ) );
+                    linearShader.Set( "WbTint", f( controls::TintGain( params[ PT_TINT ] ) ) );
+                }
 		linearShader.Set( "GainB", f( gainB ) );
 		{
 			float m[ 9 ];

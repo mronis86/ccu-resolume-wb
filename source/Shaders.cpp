@@ -37,6 +37,9 @@ uniform vec2 MaxUV;
 
 uniform float MasterGain;   //linear, exactly 1 at 0 dB
 uniform float GainR;        //white balance, drift included
+uniform float WbTempR;      //color temperature R gain
+uniform float WbTempB;      //color temperature B gain
+uniform float WbTint;       //tint G gain
 uniform float GainB;
 uniform mat3 Matrix;        //Saturation . Preset, row-major on the CPU, transposed on upload
 
@@ -85,7 +88,7 @@ void main()
 		lin = vec3( knee( lin.r ), knee( lin.g ), knee( lin.b ) );
 
 	//White balance: R and B gains about G.
-	lin = vec3( lin.r * GainR, lin.g, lin.b * GainB );
+	lin = vec3( lin.r * GainR * WbTempR, lin.g * WbTint, lin.b * GainB * WbTempB );
 
 	//The matrix, in linear light.
 	lin = Matrix * lin;
